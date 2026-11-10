@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Ten a Week has moved</title>
+<style>
+  :root{--ink:#141210;--cream:#f3ece5}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;background:#000;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;letter-spacing:-.02em;padding:16px;box-sizing:border-box}
+  .card{background:var(--cream);color:var(--ink);border-radius:28px;padding:28px;max-width:380px;width:100%;box-sizing:border-box;
+    background-image:radial-gradient(90% 70% at 80% 110%,rgba(255,91,48,.9),transparent 70%),radial-gradient(60% 60% at 10% 0%,rgba(255,181,147,.8),transparent 70%)}
+  h1{font-size:30px;letter-spacing:-.05em;margin:0 0 8px;line-height:1}
+  p{font-size:15px;line-height:1.35;margin:0 0 16px}
+  a.btn,button{display:block;width:100%;box-sizing:border-box;text-align:center;height:48px;line-height:48px;border-radius:999px;border:0;background:var(--ink);color:var(--cream);font-size:15px;text-decoration:none;margin-top:8px;font-family:inherit;cursor:pointer}
+  button.ghost{background:rgba(20,18,16,.08);color:var(--ink)}
+  #old{display:none}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>ten a week has moved</h1>
+  <p id="msg">taking you to the new app…</p>
+  <div id="old">
+    <p><b id="count"></b> were saved on this phone or computer by the old version. they are <b>not</b> in the new app. download them and send the file to your manager so nothing is lost.</p>
+    <button class="ghost" id="dl">download my old videos</button>
+  </div>
+  <a class="btn" href="https://tenaweek.pages.dev/">open the new app</a>
+</div>
+<script>
+  var NEW = 'https://tenaweek.pages.dev/';
+  var raw = null, n = 0;
+  try {
+    raw = localStorage.getItem('tenaweek.v2') || localStorage.getItem('tenaweek.v1');
+    if (raw) {
+      var d = JSON.parse(raw);
+      if (Array.isArray(d.videos)) n = d.videos.length;
+      else if (d.logs) Object.values(d.logs).forEach(function(w){ Object.values(w).forEach(function(a){ a.forEach(function(x){ n += x; }); }); });
+    }
+  } catch (e) {}
+  if (n > 0) {
+    document.getElementById('msg').textContent = 'the app now lives at tenaweek.pages.dev with logins, so the whole team shares the same numbers.';
+    document.getElementById('count').textContent = n + (n === 1 ? ' video' : ' videos');
+    document.getElementById('old').style.display = 'block';
+    document.getElementById('dl').onclick = function(){
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([raw], { type: 'application/json' }));
+      a.download = 'ten-a-week-old-data.json'; document.body.appendChild(a); a.click(); a.remove();
+    };
+  } else {
+    setTimeout(function(){ location.replace(NEW); }, 800);
+  }
+</script>
+</body>
+</html>
